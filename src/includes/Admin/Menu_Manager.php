@@ -75,7 +75,7 @@ class Menu_Manager {
 	 * Render the main menu page
 	 */
 	public function render_main_menu(): void {
-		echo '<h1>' . esc_html__( 'Balto Delivery Main Menu', 'balto-delivery' ) . '</h1>';
+		Dashboard_Page::get_instance()->render_dashboard_page();
 	}
 
 	/**

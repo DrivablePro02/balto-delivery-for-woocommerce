@@ -37,14 +37,12 @@ define('BALTO_DELIVERY_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
 require_once BALTO_DELIVERY_PLUGIN_DIR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-// if(!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))){
-//     add_action('admin_notices', function() {
-//         echo '<div class="error"><p>' . __('Balto Delivery requires woocommerce to be installed and active', 'balto-delivery') . '</p></div>';
-//     });
-//     return;
-// }
-
-// require_once BALTO_DELIVERY_PLUGIN_DIR . 'src' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'Loader.php';
+if(!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))){
+    add_action('admin_notices', function() {
+        echo '<div class="error"><p>' . __('Balto Delivery requires woocommerce to be installed and active', 'balto-delivery') . '</p></div>';
+    });
+    return;
+}
 
 //Intilize plugin loader
 Loader::get_instance();

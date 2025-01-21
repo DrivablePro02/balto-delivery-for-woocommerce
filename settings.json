@@ -1,0 +1,5 @@
+{
+    "intelephense.environment.includePaths": [
+        "/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php"
+    ]
+}

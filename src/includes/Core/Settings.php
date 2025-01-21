@@ -67,7 +67,7 @@ class Settings {
 	}
 
 	private function __construct() {
-		// Constructor logic if needed
+
 	}
 
 	public static function get_defaults(): array {
