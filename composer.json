@@ -9,7 +9,7 @@
         "monolog/monolog": "^2.0"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.6",
+        "squizlabs/php_codesniffer": "^3.11",
         "wp-coding-standards/wpcs": "^3.0"
     },
     "license": "GPL-2.0-or-later",

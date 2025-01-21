@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'yahya-dev/balto',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '377612c5e2018bb994682a10836319e837f4b1c2',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -233,9 +233,9 @@
             'dev_requirement' => false,
         ),
         'yahya-dev/balto' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '377612c5e2018bb994682a10836319e837f4b1c2',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
