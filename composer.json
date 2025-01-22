@@ -14,6 +14,9 @@
         "php-stubs/woocommerce-stubs": "^9.5",
         "php-stubs/wordpress-stubs": "^6.7"
         },
+    "scripts": {
+        "clean-up" : "./vendor/bin/phpcbf --standard=WordPress src/"
+    },
     "license": "GPL-2.0-or-later",
     "autoload": {
         "psr-4": {

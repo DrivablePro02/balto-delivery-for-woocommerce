@@ -4,11 +4,20 @@ declare(strict_types=1);
 namespace Balto_Delivery\Includes\Services;
 
 use Balto_Delivery\Includes\Helpers\Ajax_Handler;
+use Balto_Deliver\Includes\Db\Db_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class Delivery_Service
+ *
+ * This class implements a Singleton pattern to manage delivery services.
+ * It handles AJAX actions related to updating delivery statuses, performs
+ * database operations, and sends notification emails when a delivery status
+ * is updated.
+ */
 class Delivery_Service {
 
 	/**
@@ -38,6 +47,9 @@ class Delivery_Service {
 
 	/**
 	 * Register AJAX actions
+	 *
+	 * This method registers AJAX actions with WordPress, associating
+	 * them with their respective handler methods.
 	 */
 	private function register_ajax_actions(): void {
 		$ajax_handler = new Ajax_Handler();
@@ -50,6 +62,10 @@ class Delivery_Service {
 
 	/**
 	 * Handle AJAX request to update delivery status
+	 *
+	 * This method processes the AJAX request for updating the delivery
+	 * status, ensuring the data is sanitized and then updating the
+	 * delivery status in the database.
 	 */
 	public function handle_update_delivery_status(): void {
 		$ajax_handler = new Ajax_Handler();
@@ -69,8 +85,11 @@ class Delivery_Service {
 	/**
 	 * Update delivery status in the database
 	 *
-	 * @param int    $delivery_id
-	 * @param string $new_status
+	 * @param int    $delivery_id The ID of the delivery to update.
+	 * @param string $new_status  The new status to set for the delivery.
+	 *
+	 * This method updates the delivery status in the database and triggers
+	 * an email notification and observer notifications.
 	 */
 	public function update_delivery_status( int $delivery_id, string $new_status ): void {
 		global $wpdb;
@@ -89,8 +108,11 @@ class Delivery_Service {
 	/**
 	 * Send notification email to the customer
 	 *
-	 * @param int    $delivery_id
-	 * @param string $new_status
+	 * @param int    $delivery_id The ID of the delivery.
+	 * @param string $new_status  The new status of the delivery.
+	 *
+	 * This method sends an email notification to the admin when the delivery
+	 * status is updated.
 	 */
 	public function send_status_change_email( int $delivery_id, string $new_status ): void {
 		$admin_email = get_option( 'admin_email' );

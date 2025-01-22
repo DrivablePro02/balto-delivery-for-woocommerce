@@ -75,7 +75,7 @@ class Loader {
 			// Admin components
 			'admin.menu'       => \Balto_Delivery\Includes\Admin\Menu_Manager::class,
 			'admin.settings'   => \Balto_Delivery\Includes\Admin\Settings_Page::class,
-			'admin.dashboard'   => \Balto_Delivery\Includes\Admin\Dashboard_Page::class,
+			'admin.dashboard'  => \Balto_Delivery\Includes\Admin\Dashboard_Page::class,
 
 			// WooCommerce integration
 			'wc.order'         => \Balto_Delivery\Includes\WooCommerce\Order_Integration::class,
@@ -191,7 +191,7 @@ class Loader {
 		load_plugin_textdomain(
 			'balto-delivery',
 			false,
-			dirname( BALTO_DELIVERY_PLUGIN_BASENAME ) . '/languages'
+			dirname( BALTO_DELIVERY_PLUGIN_BASENAME ) . '/src/languages'
 		);
 	}
 
@@ -222,29 +222,31 @@ class Loader {
 	 */
 	private function install_db_tables(): void {
 		global $wpdb;
-		
+
 		$charset_collate = $wpdb->get_charset_collate();
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		
+
 		$table_name = $wpdb->prefix . 'balto_deliveries';
-		$sql = array();
-		
+		$sql        = array();
+
 		// First, check if table exists
-		$table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
-		
-		if ($table_exists) {
+		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name;
+
+		if ( $table_exists ) {
 			// Correct way to check if column exists
-			$column_exists = $wpdb->get_results("SELECT COLUMN_NAME 
+			$column_exists = $wpdb->get_results(
+				"SELECT COLUMN_NAME 
 				FROM INFORMATION_SCHEMA.COLUMNS 
 				WHERE TABLE_NAME = '$table_name' 
-				AND COLUMN_NAME = 'driver_id'");
-				
-			if (!empty($column_exists)) {
+				AND COLUMN_NAME = 'driver_id'"
+			);
+
+			if ( ! empty( $column_exists ) ) {
 				// Add ALTER TABLE query if the column exists
 				$sql[] = "ALTER TABLE $table_name CHANGE COLUMN driver_id shipping_provider varchar(255) DEFAULT NULL;";
 			}
 		}
-		
+
 		// Create/update deliveries table
 		$sql[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}balto_deliveries (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
@@ -258,13 +260,13 @@ class Loader {
 			KEY order_id (order_id),
 			KEY tracking_number (tracking_number)
 		) $charset_collate;";
-		
+
 		// Execute each query separately for better error handling
-		foreach ($sql as $query) {
-			$result = $wpdb->query($query);
-			if ($result === false) {
+		foreach ( $sql as $query ) {
+			$result = $wpdb->query( $query );
+			if ( $result === false ) {
 				// Log or handle the error
-				error_log("Failed to execute query: " . $wpdb->last_error);
+				error_log( 'Failed to execute query: ' . $wpdb->last_error );
 			}
 		}
 	}

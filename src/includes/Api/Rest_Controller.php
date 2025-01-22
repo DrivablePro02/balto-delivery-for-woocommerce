@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Balto_Delivery\Includes\Api;
 
-if ( ! defined( 'ABSPATH' ) )  exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * REST Calls Handler class for Balto Delivery
