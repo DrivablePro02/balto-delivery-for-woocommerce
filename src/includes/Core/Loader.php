@@ -25,7 +25,7 @@ class Loader {
 	/**
 	 * Instance of this class
 	 *
-	 * @var Loader
+	 * @var Loader|null
 	 */
 	private static $instance = null;
 
