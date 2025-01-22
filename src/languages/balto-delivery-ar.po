@@ -1,0 +1,98 @@
+msgid ""
+msgstr ""
+
+msgid "A B2B plugin for tracking deliveries."
+msgstr "إضافة B2B لتتبع عمليات التسليم."
+
+msgid "An error occurred while saving settings."
+msgstr "حدث خطأ أثناء حفظ الإعدادات."
+
+msgid "Balto"
+msgstr "بالطو"
+
+msgid "Balto Delivery"
+msgstr "تسليم بالطو"
+
+msgid "Balto Delivery Dashboard"
+msgstr "لوحة تحكم تسليم بالطو"
+
+msgid "Balto Delivery requires WooCommerce to be installed and activated."
+msgstr "يتطلب تسليم بالطو تثبيت وتفعيل WooCommerce."
+
+msgid "Balto Delivery requires WooCommerce to be installed and active"
+msgstr "يتطلب تسليم بالطو تثبيت WooCommerce وتفعيله."
+
+msgid "Balto Delivery Settings"
+msgstr "إعدادات تسليم بالطو"
+
+msgid "Configure general delivery settings."
+msgstr "تهيئة إعدادات التسليم العامة."
+
+msgid "Configure shipping settings."
+msgstr "تهيئة إعدادات الشحن."
+
+msgid "Created At"
+msgstr "تاريخ الإنشاء"
+
+msgid "Delivery Radius"
+msgstr "نطاق التسليم"
+
+msgid "Enable delivery tracking functionality"
+msgstr "تمكين وظيفة تتبع التسليم"
+
+msgid "Enable Tracking"
+msgstr "تمكين التتبع"
+
+msgid "Failed to save the main settings."
+msgstr "فشل في حفظ الإعدادات الرئيسية."
+
+msgid "General Settings"
+msgstr "الإعدادات العامة"
+
+msgid "Id"
+msgstr "المعرف"
+
+msgid "Last Updated"
+msgstr "آخر تحديث"
+
+msgid "Maximum delivery radius"
+msgstr "الحد الأقصى لنطاق التسليم"
+
+msgid "No changes were made or some settings failed to save."
+msgstr "لم يتم إجراء أي تغييرات أو فشلت بعض الإعدادات في الحفظ."
+
+msgid "No data available."
+msgstr "لا توجد بيانات متاحة."
+
+msgid "Order Id"
+msgstr "معرف الطلب"
+
+msgid "Save Settings"
+msgstr "حفظ الإعدادات"
+
+msgid "Saving..."
+msgstr "جارٍ الحفظ..."
+
+msgid "Select the shipping provider"
+msgstr "اختر مزود الشحن"
+
+msgid "Settings"
+msgstr "الإعدادات"
+
+msgid "Settings saved successfully."
+msgstr "تم حفظ الإعدادات بنجاح."
+
+msgid "Shipping Provider"
+msgstr "مزود الشحن"
+
+msgid "Shipping Settings"
+msgstr "إعدادات الشحن"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "Tracking Number"
+msgstr "رقم التتبع"
+
+msgid "You do not have sufficient permissions to access this page."
+msgstr "ليس لديك أذونات كافية للوصول إلى هذه الصفحة."

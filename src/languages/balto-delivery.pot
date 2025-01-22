@@ -1,0 +1,99 @@
+msgid ""
+msgstr ""
+
+msgid "A B2B plugin for tracking deliveries."
+msgstr ""
+
+msgid "An error occurred while saving settings."
+msgstr ""
+
+msgid "Balto"
+msgstr ""
+
+msgid "Balto Delivery"
+msgstr ""
+
+msgid "Balto Delivery Dashboard"
+msgstr ""
+
+msgid "Balto Delivery requires WooCommerce to be installed and activated."
+msgstr ""
+
+msgid "Balto Delivery requires WooCommerce to be installed and active"
+msgstr ""
+
+msgid "Balto Delivery Settings"
+msgstr ""
+
+msgid "Configure general delivery settings."
+msgstr ""
+
+msgid "Configure shipping settings."
+msgstr ""
+
+msgid "Created At"
+msgstr ""
+
+msgid "Delivery Radius"
+msgstr ""
+
+msgid "Enable delivery tracking functionality"
+msgstr ""
+
+msgid "Enable Tracking"
+msgstr ""
+
+msgid "Failed to save the main settings."
+msgstr ""
+
+msgid "General Settings"
+msgstr ""
+
+msgid "Id"
+msgstr ""
+
+msgid "Last Updated"
+msgstr ""
+
+msgid "Maximum delivery radius"
+msgstr ""
+
+msgid "No changes were made or some settings failed to save."
+msgstr ""
+
+msgid "No data available."
+msgstr ""
+
+msgid "Order Id"
+msgstr ""
+
+msgid "Save Settings"
+msgstr ""
+
+msgid "Saving..."
+msgstr ""
+
+msgid "Select the shipping provider"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Settings saved successfully."
+msgstr ""
+
+msgid "Shipping Provider"
+msgstr ""
+
+msgid "Shipping Settings"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Tracking Number"
+msgstr ""
+
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
