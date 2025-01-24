@@ -22,9 +22,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Settings_Page {
+	/**
+	 * Instance of this class
+	 *
+	 * @var Settings_Page|null
+	 */
 	private static $instance = null;
+
+	/**
+	 * Settings instance
+	 *
+	 * @var Settings
+	 */
 	private $settings;
 
+	/**
+	 * Get class instance | Singleton
+	 *
+	 * @return self
+	 */
 	public static function get_instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -38,37 +54,10 @@ class Settings_Page {
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'wp_ajax_save_balto_settings', array( $this, 'save_settings' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 	}
 
 	public function load_textdomain(): void {
 		load_plugin_textdomain( 'balto-delivery', false, dirname( BALTO_DELIVERY_PLUGIN_BASENAME ) . '/languages' );
-	}
-
-	public function enqueue_admin_scripts() {
-		// Settings page JavaScript
-		wp_enqueue_script(
-			'balto-delivery-settings',
-			BALTO_DELIVERY_PLUGIN_URL . 'src/assets/admin/js/balto-settings.js',
-			array( 'jquery' ),
-			BALTO_DELIVERY_VERSION,
-			true
-		);
-
-		// Localize the settings script
-		wp_localize_script(
-			'balto-delivery-settings',
-			'baltoSettings',
-			array(
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'save_balto_settings' ),
-				'i18n'    => array(
-					'saveSettings' => __( 'Save Settings', 'balto-delivery' ),
-					'saving'       => __( 'Saving...', 'balto-delivery' ),
-					'errorMessage' => __( 'An error occurred while saving settings.', 'balto-delivery' ),
-				),
-			)
-		);
 	}
 
 	public function register_settings(): void {
@@ -126,7 +115,9 @@ class Settings_Page {
 				'id'          => 'delivery_radius',
 				'section'     => 'general',
 				'description' => __( 'Maximum delivery radius', 'balto-delivery' ),
+				'min'         => true,
 			)
+			
 		);
 
 		add_settings_field(
@@ -165,7 +156,8 @@ class Settings_Page {
 		<input type="number" 
 				name="<?php echo esc_attr( $option_name ); ?>"
 				value="<?php echo esc_attr( $value ); ?>"
-				class="regular-text">
+				class="regular-text"
+				<?php if ( $args['min'] !== false ) : ?> min="0" <?php endif; ?>>
 		<p class="description"><?php echo esc_html( $args['description'] ); ?></p>
 		<?php
 	}

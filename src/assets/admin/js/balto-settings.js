@@ -1,7 +1,7 @@
 (function($) {
     'use strict';
 
-    class BaltoSettings {
+    class balto_delivery_settings {
         constructor() {
             this.formSelector = '#balto-settings-form';
             this.init();
@@ -39,19 +39,14 @@
 
             // Add required action and nonce
             formData.append('action', 'save_balto_settings');
-            formData.append('nonce', baltoSettings.nonce);
-
-            // Debug: Log form data
-            for (let [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
+            formData.append('nonce', balto_delivery_settings_data.nonce);
 
             // Show loading state
             this.setLoadingState(true);
 
             // Make the AJAX call
             $.ajax({
-                url: baltoSettings.ajaxurl,
+                url: balto_delivery_settings_data.ajaxurl,
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -71,18 +66,17 @@
         }
 
         handleError(error) {
-            console.error('Error:', error);
-            this.showNotice('error', baltoSettings.i18n.errorMessage);
+            this.showNotice('error', balto_delivery_settings_data.i18n.errorMessage);
         }
 
         setLoadingState(isLoading) {
             const submitButton = $(this.formSelector).find('input[type="submit"]');
             if (isLoading) {
                 submitButton.prop('disabled', true);
-                submitButton.val(baltoSettings.i18n.saving);
+                submitButton.val(balto_delivery_settings_data.i18n.saving);
             } else {
                 submitButton.prop('disabled', false);
-                submitButton.val(baltoSettings.i18n.saveSettings);
+                submitButton.val(balto_delivery_settings_data.i18n.saveSettings);
             }
         }
 
@@ -110,6 +104,6 @@
     }
 
     // Initialize the settings
-    new BaltoSettings();
+    new balto_delivery_settings();
 
 })(jQuery);
