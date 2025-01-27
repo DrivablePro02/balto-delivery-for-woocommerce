@@ -3,56 +3,106 @@ declare(strict_types=1);
 
 namespace Balto_Delivery\Includes\Helpers;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
- * AJAX handler class for Balto Delivery
+ * Manages AJAX requests for WordPress plugins with enhanced security and flexibility.
  *
- * This class handles the registration and processing of AJAX requests for the plugin.
- * It provides a centralized way to manage AJAX actions and ensures security checks are performed.
- *
- * @package Balto_Delivery_for_woocommerce
- * @subpackage Balto_Delivery_for_woocommerce/Ajax
- *
- * @since 1.0.0
+ * @package Balto_Delivery_for_WooCommerce
+ * @subpackage Balto_Delivery_for_WooCommerce/Helpers
+ * 
+ * @since   1.0.0
  * @author Yahya Eddaqqaq
  */
-
 class Ajax_Handler {
+
 	/**
-	 * Register AJAX actions.
+	 * Registers multiple AJAX actions with WordPress.
 	 *
-	 * @param array $actions Associative array of action names and their corresponding callback functions.
+	 * @param array<string, callable> $actions Associative array of action names and callback functions.
 	 */
-	public function register_actions( array $actions ): void {
+	public function registerActions( array $actions ): void {
 		foreach ( $actions as $action => $callback ) {
-			add_action( "wp_ajax_$action", $callback );
-			add_action( "wp_ajax_nopriv_$action", $callback );
+			add_action( "wp_ajax_{$action}", $callback );
+			add_action( "wp_ajax_nopriv_{$action}", $callback );
 		}
 	}
 
 	/**
-	 * Handle AJAX request.
+	 * Processes an AJAX request with comprehensive security checks.
 	 *
-	 * @param callable $callback The callback function to handle the request.
+	 * @param  callable $callback    Function to handle the AJAX request.
+	 * @param  string   $nonceAction Unique nonce action for security verification.
+	 * @throws \Exception If nonce validation fails.
 	 */
-	public function handle_request( callable $callback, string $nonce_action ): void {
-		// Validate nonce for security
-		if ( ! isset( $_POST['security'] ) || ! check_ajax_referer( $nonce_action, 'security', false ) ) {
-			wp_send_json_error( array( 'message' => 'Invalid nonce' ) );
-			return;
-		}
+	public function handleRequest( callable $callback, string $nonceAction ): void {
+		try {
+			// Validate nonce with strict security
+			$this->validateNonce( $nonceAction );
 
-		// Sends the AJAX data to the callback function
-		$response = call_user_func( $callback, $_POST );
+			// Sanitize and prepare input data
+			$requestData = $this->sanitizeRequestData( $_POST );
 
-		// Checks if the response from call_user_func is a WP_ERROR object
-		if ( is_wp_error( $response ) ) {
-			wp_send_json_error( array( 'message' => $response->get_error_message() ) );
-		} else {
+			// Execute callback and handle response
+			$response = $this->executeCallback( $callback, $requestData );
+
+			// Send successful JSON response
 			wp_send_json_success( $response );
+
+		} catch ( \Exception $e ) {
+			// Send error response with appropriate status
+			wp_send_json_error(
+				array(
+					'message' => $e->getMessage(),
+					'code'    => $e->getCode(),
+				),
+				403
+			);
 		}
+	}
+
+	/**
+	 * Validates the AJAX nonce.
+	 *
+	 * @param  string $nonceAction Nonce action to verify.
+	 * @throws \Exception If nonce is invalid.
+	 */
+	private function validateNonce( string $nonceAction ): void {
+		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( $_POST['security'], $nonceAction ) ) {
+			throw new \Exception( 'Invalid or expired security token', 403 );
+		}
+	}
+
+	/**
+	 * Sanitizes incoming request data.
+	 *
+	 * @param  array $data Raw request data.
+	 * @return array Sanitized request data.
+	 */
+	private function sanitizeRequestData( array $data ): array {
+		return array_map(
+			function ( $value ) {
+				return is_string( $value ) ? sanitize_text_field( $value ) : $value;
+			},
+			$data
+		);
+	}
+
+	/**
+	 * Executes the AJAX callback with error handling.
+	 *
+	 * @param  callable $callback Callback function to execute.
+	 * @param  array    $data     Sanitized request data.
+	 * @return mixed Callback response.
+	 * @throws \Exception If callback returns a WordPress error.
+	 */
+	private function executeCallback( callable $callback, array $data ) {
+		$response = call_user_func( $callback, $data );
+
+		if ( is_wp_error( $response ) ) {
+			throw new \Exception( $response->get_error_message(), $response->get_error_code() );
+		}
+
+		return $response;
 	}
 }
