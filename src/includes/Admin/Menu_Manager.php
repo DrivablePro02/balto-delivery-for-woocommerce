@@ -14,12 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * and submenus within the WordPress admin dashboard. It follows the Singleton design
  * pattern to ensure only one instance of the class exists.
  *
- * @package Balto_Delivery_for_woocommerce
+ * @package    Balto_Delivery_for_woocommerce
  * @subpackage Balto_Delivery_for_woocommerce/Admin
  *
  * @since 1.0.0
+ * @author Yahya Eddaqqaq
  */
 class Menu_Manager {
+
 
 	/**
 	 * Instance of this class
