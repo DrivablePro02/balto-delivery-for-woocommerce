@@ -15,38 +15,39 @@ if ( ! defined( 'ABSPATH' ) ) {
  * activation, deactivation, and WooCommerce-specific features. It follows
  * the Singleton design pattern to ensure only one instance of the class exists.
  *
- * @package Balto_Delivery_for_woocommerce
+ * @package    Balto_Delivery_for_woocommerce
  * @subpackage Balto_Delivery_for_woocommerce/Core
  *
- * @since 1.0.0
+ * @since  1.0.0
  * @author Yahya Eddaqqaq
  */
 class Loader {
+
 	/**
 	 * Instance of this class
 	 *
-	 * @var Loader|null
+	 * @var self|null
 	 */
-	private static $instance = null;
+	private static ?self $instance = null;
 
 	/**
 	 * Container for storing plugin components
 	 *
-	 * @var array
+	 * @var array<string, object>
 	 */
-	private $container = array();
+	private array $container = array();
 
 	/**
 	 * Plugin components that need initialization
 	 *
-	 * @var array
+	 * @var array<string, class-string>
 	 */
-	private $components = array();
+	private array $components = array();
 
 	/**
-	 * Get class instance | singelton pattern
+	 * Get class instance | singleton pattern
 	 *
-	 * @return Loader
+	 * @return self
 	 */
 	public static function get_instance(): self {
 		if ( null === self::$instance ) {
@@ -65,6 +66,8 @@ class Loader {
 
 	/**
 	 * Define plugin components
+	 *
+	 * @return void
 	 */
 	private function define_components(): void {
 		$this->components = array(
@@ -91,12 +94,13 @@ class Loader {
 
 			// Helpers
 			'ajax.handler'     => \Balto_Delivery\Includes\Helpers\Ajax_Handler::class,
-
 		);
 	}
 
 	/**
 	 * Initialize WordPress hooks
+	 *
+	 * @return void
 	 */
 	private function init_hooks(): void {
 		// Plugin activation/deactivation
@@ -115,6 +119,8 @@ class Loader {
 
 	/**
 	 * Initialize plugin components
+	 *
+	 * @return void
 	 */
 	public function init_components(): void {
 		foreach ( $this->components as $key => $class ) {
@@ -156,6 +162,8 @@ class Loader {
 
 	/**
 	 * Plugin activation handler
+	 *
+	 * @return void
 	 */
 	public function activate(): void {
 		if ( ! $this->is_woocommerce_active() ) {
@@ -178,6 +186,8 @@ class Loader {
 
 	/**
 	 * Plugin deactivation handler
+	 *
+	 * @return void
 	 */
 	public function deactivate(): void {
 		// Clean up if needed
@@ -186,6 +196,8 @@ class Loader {
 
 	/**
 	 * Load plugin textdomain
+	 *
+	 * @return void
 	 */
 	public function load_textdomain(): void {
 		load_plugin_textdomain(
@@ -198,10 +210,10 @@ class Loader {
 	/**
 	 * Get a component from container
 	 *
-	 * @param string $key
-	 * @return mixed
+	 * @param string $key The component key.
+	 * @return object|null The component instance or null if not found.
 	 */
-	public function get_component( string $key ) {
+	public function get_component( string $key ): ?object {
 		if ( ! isset( $this->container[ $key ] ) && isset( $this->components[ $key ] ) ) {
 			$this->container[ $key ] = new $this->components[ $key ]();
 		}
@@ -219,12 +231,14 @@ class Loader {
 
 	/**
 	 * Install database tables
+	 *
+	 * @return void
 	 */
 	private function install_db_tables(): void {
 		global $wpdb;
 
 		$charset_collate = $wpdb->get_charset_collate();
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		include_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		$table_name = $wpdb->prefix . 'balto_deliveries';
 		$sql        = array();
@@ -242,8 +256,8 @@ class Loader {
 			);
 
 			if ( ! empty( $column_exists ) ) {
-				// Add ALTER TABLE query if the column exists
-				$sql[] = "ALTER TABLE $table_name CHANGE COLUMN driver_id shipping_provider varchar(255) DEFAULT NULL;";
+					// Add ALTER TABLE query if the column exists
+					$sql[] = "ALTER TABLE $table_name CHANGE COLUMN driver_id shipping_provider varchar(255) DEFAULT NULL;";
 			}
 		}
 
@@ -254,12 +268,13 @@ class Loader {
 			tracking_number varchar(100) NOT NULL,
 			status varchar(50) NOT NULL DEFAULT 'pending',
 			shipping_provider varchar(255) DEFAULT NULL,
-			created_at datetime DEFAULT CURRENT_TIMESTAMP,
-			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-			PRIMARY KEY  (id),
+			created_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			updated_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY (id),
 			KEY order_id (order_id),
 			KEY tracking_number (tracking_number)
 		) $charset_collate;";
+		
 
 		// Execute each query separately for better error handling
 		foreach ( $sql as $query ) {
@@ -273,36 +288,41 @@ class Loader {
 
 	/**
 	 * Install default options
+	 *
+	 * @return void
 	 */
 	private function install_options(): void {
-		$settings    = Settings::get_instance();
-		$defaults    = $settings->get_settings();
+		$settings = Settings::get_instance();
+		$defaults = $settings->get_defaults();
 		$all_options = array();
 
 		foreach ( $defaults as $section => $options ) {
 			foreach ( $options as $key => $value ) {
-				$option_name = $settings::OPTION_NAME . '[' . $section . ']' . '[' . $key . ']';
-				if ( get_option( $option_name ) === false ) {
-					add_option( $option_name, $value );
-				}
 				$all_options[ $section ][ $key ] = $value;
 			}
 		}
 
-		// Store serialized data of all options
-		if ( get_option( $settings::OPTION_NAME ) === false ) {
-			add_option( $settings::OPTION_NAME, serialize( $all_options ) );
+		// First try to update, if that fails then add
+		if ( ! $settings->update_option( $all_options ) ) {
+			if ( ! $settings->add_option( $all_options ) ) {
+				error_log( 'Failed to install Balto Delivery options' );
+			}
 		}
 	}
 
-
 	/**
 	 * Prevent cloning
+	 *
+	 * @return void
 	 */
-	private function __clone() {}
+	private function __clone() {
+	}
 
 	/**
 	 * Prevent unserializing
+	 *
+	 * @throws \Exception When attempting to unserialize.
+	 * @return void
 	 */
 	public function __wakeup() {
 		throw new \Exception( 'Cannot unserialize singleton' );
