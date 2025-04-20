@@ -20,14 +20,14 @@ class Shipping_Integration extends WC_Shipping_Method {
 	 *
 	 * @var array
 	 */
-	private $shipping_providers = array();
+	public $shipping_providers = array();
 
 	/**
 	 * Singleton instance
 	 *
 	 * @var self
 	 */
-	private static $instance = null;
+	public static $instance = null;
 
 	/**
 	 * Get singleton instance
@@ -63,7 +63,7 @@ class Shipping_Integration extends WC_Shipping_Method {
 	/**
 	 * Initialize shipping method settings
 	 */
-	private function init(): void {
+	public function init(): void {
 		$this->init_form_fields();
 		$this->init_settings();
 
@@ -77,7 +77,7 @@ class Shipping_Integration extends WC_Shipping_Method {
 	/**
 	 * Register shipping methods with WooCommerce
 	 */
-	private function register_shipping_methods(): void {
+	public function register_shipping_methods(): void {
 		add_filter(
 			'woocommerce_shipping_methods',
 			function ( $methods ) {
@@ -111,7 +111,7 @@ class Shipping_Integration extends WC_Shipping_Method {
 	/**
 	 * Load and process shipping providers from options
 	 */
-	private function load_shipping_providers(): void {
+	public function load_shipping_providers(): void {
 		$delivery_options = $this->settings->get_settings();
 
 		if ( isset( $delivery_options['shipping'] ) ) {
@@ -154,7 +154,7 @@ class Shipping_Integration extends WC_Shipping_Method {
 	 * @param  array $package  Shipping package
 	 * @return float Shipping cost
 	 */
-	private function get_shipping_cost( array $provider, array $package ): float {
+	public function get_shipping_cost( array $provider, array $package ): float {
 		// Base implementation - override in child classes or via filters
 		$base_cost = 0.00;
 
@@ -190,7 +190,7 @@ class Shipping_Integration extends WC_Shipping_Method {
 	/**
 	 * Prevent cloning
 	 */
-	private function __clone() {
+	public function __clone() {
 	}
 
 	/**
