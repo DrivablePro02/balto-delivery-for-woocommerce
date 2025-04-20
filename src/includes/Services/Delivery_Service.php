@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Delivery_Service {
 
+
 	/**
 	 * Instance of this class
 	 *
@@ -43,7 +44,8 @@ class Delivery_Service {
 	/**
 	 * Private constructor to prevent direct creation
 	 */
-	private function __construct() {}
+	private function __construct() {
+	}
 
 	/**
 	 * Register AJAX actions
@@ -53,7 +55,7 @@ class Delivery_Service {
 	 */
 	private function register_ajax_actions(): void {
 		$ajax_handler = new Ajax_Handler();
-		$ajax_handler->register_actions(
+		$ajax_handler->register_ajax_actions(
 			array(
 				'balto_update_delivery_status' => array( $this, 'handle_update_delivery_status' ),
 			)
@@ -88,8 +90,8 @@ class Delivery_Service {
 	 * @param int    $delivery_id The ID of the delivery to update.
 	 * @param string $new_status  The new status to set for the delivery.
 	 *
-	 * This method updates the delivery status in the database and triggers
-	 * an email notification and observer notifications.
+	*                            This method updates the delivery status in the database and triggers
+	*                            an email notification and observer notifications.
 	 */
 	public function update_delivery_status( int $delivery_id, string $new_status ): void {
 		global $wpdb;
@@ -111,8 +113,8 @@ class Delivery_Service {
 	 * @param int    $delivery_id The ID of the delivery.
 	 * @param string $new_status  The new status of the delivery.
 	 *
-	 * This method sends an email notification to the admin when the delivery
-	 * status is updated.
+	 *                            This method sends an email notification to the admin when the delivery
+	 *                            status is updated.
 	 */
 	public function send_status_change_email( int $delivery_id, string $new_status ): void {
 		$admin_email = get_option( 'admin_email' );

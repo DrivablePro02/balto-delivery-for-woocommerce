@@ -10,12 +10,16 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.11",
-        "wp-coding-standards/wpcs": "^3.0",
+        "wp-coding-standards/wpcs": "^3.1",
         "php-stubs/woocommerce-stubs": "^9.5",
-        "php-stubs/wordpress-stubs": "^6.7"
-        },
+        "php-stubs/wordpress-stubs": "^6.7",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpunit/phpunit": "^9.6",
+        "wp-phpunit/wp-phpunit": "^5.0",
+        "yoast/phpunit-polyfills": "3.0"
+    },
     "scripts": {
-        "clean-up" : "./vendor/bin/phpcbf --standard=WordPress src/"
+        "clean-up" : "./vendor/bin/phpcbf --standard=WordPress"
     },
     "license": "GPL-2.0-or-later",
     "autoload": {

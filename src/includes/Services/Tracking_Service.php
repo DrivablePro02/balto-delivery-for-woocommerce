@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Tracking_Service {
 
+
 	/**
 	 * Instance of this class
 	 *
@@ -31,5 +32,6 @@ class Tracking_Service {
 	/**
 	 * Private constructor to prevent direct instantiation
 	 */
-	private function __construct() {}
+	private function __construct() {
+	}
 }

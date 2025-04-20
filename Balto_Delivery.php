@@ -5,13 +5,15 @@ namespace Balto_Delivery;
 
 use Balto_Delivery\Includes\Core\Loader;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+
+if(!defined('ABSPATH')) exit;
+
 
 /**
  * Plugin Name: Balto
+ * Plugin URI: https://balto.com
  * Author: Balto
+ * Author URI: https://balto.com
  * Version: 1.0.0
  * Description: A B2B plugin for tracking deliveries.
  * Text Domain: balto-delivery
@@ -21,88 +23,95 @@ if (!defined('ABSPATH')) {
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * WC requires at least: 6.0
+ * WC tested up to: 8.0
  *
  * @package Balto_Delivery_for_woocommerce
  * @since 1.0.0
  * @author Yahya Eddaqqaq
  */
 
-final class Balto_Delivery_Plugin {
-    /**
-     * @var Balto_Delivery_Plugin|null Single instance of the plugin
-     */
-    private static ?Balto_Delivery_Plugin $instance = null;
-
-    /**
-     * @var Loader|null Plugin loader instance
-     */
-    private ?Loader $loader = null;
-
-    /**
-     * Plugin constructor.
-     * Private to enforce singleton pattern.
-     */
-    private function __construct() {
-        $this->define_constants();
-        $this->check_requirements();
-        $this->init_loader();
-    }
-
-    /**
-     * Get the single instance of the plugin
-     */
-    public static function get_instance(): self {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    /**
-     * Define plugin constants
-     */
-    private function define_constants(): void {
-        define('BALTO_DELIVERY_VERSION', '1.0.0');
-        define('BALTO_DELIVERY_PLUGIN_DIR', plugin_dir_path(__FILE__));
-        define('BALTO_DELIVERY_PLUGIN_URL', plugin_dir_url(__FILE__));
-        define('BALTO_DELIVERY_PLUGIN_BASENAME', plugin_basename(__FILE__));
-    }
-
-    /**
-     * Check if requirements are met
-     */
-    private function check_requirements(): void {
-        require_once BALTO_DELIVERY_PLUGIN_DIR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-        if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-            add_action('admin_notices', function() {
-                echo '<div class="error"><p>' . 
-                    esc_html__('Balto Delivery requires WooCommerce to be installed and active', 'balto-delivery') . 
-                    '</p></div>';
-            });
-            return;
-        }
-    }
-
-    /**
-     * Initialize the plugin loader
-     */
-    private function init_loader(): void {
-        $this->loader = Loader::get_instance();
-    }
-
-    /**
-     * Prevent cloning of the instance
-     */
-    private function __clone() {}
-
-    /**
-     * Prevent unserializing of the instance
-     */
-    public function __wakeup() {}
+// Check PHP version
+if (version_compare(PHP_VERSION, '7.4', '<')) {
+    add_action('admin_notices', function() {
+        echo '<div class="error"><p>' . 
+            sprintf(
+                __('Balto Delivery requires PHP version %s or higher. You are running version %s. Please upgrade PHP to use this plugin.', 'balto-delivery'),
+                '7.4',
+                PHP_VERSION
+            ) . 
+            '</p></div>';
+    });
+    return;
 }
 
-// Initialize the plugin
-add_action('plugins_loaded', function() {
-    Balto_Delivery_Plugin::get_instance();
-});
+// Check WordPress version
+if (version_compare($GLOBALS['wp_version'], '5.0', '<')) {
+    add_action('admin_notices', function() {
+        echo '<div class="error"><p>' . 
+            sprintf(
+                __('Balto Delivery requires WordPress version %s or higher. You are running version %s. Please upgrade WordPress to use this plugin.', 'balto-delivery'),
+                '5.0',
+                $GLOBALS['wp_version']
+            ) . 
+            '</p></div>';
+    });
+    return;
+}
+
+// Plugin constants
+define('BALTO_DELIVERY_VERSION', '1.0.0');
+define('BALTO_DELIVERY_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('BALTO_DELIVERY_FILE_PATH', __FILE__);
+define('BALTO_DELIVERY_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('BALTO_DELIVERY_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('BALTO_DELIVERY_SETTINGS_PAGE', admin_url('admin.php?page=balto-delivery-settings'));
+define('BALTO_DELIVERY_MIN_WC_VERSION', '6.0');
+
+// Autoloader
+require_once BALTO_DELIVERY_PLUGIN_DIR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+// Check if WooCommerce is active
+if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+    add_action('admin_notices', function() {
+        echo '<div class="error"><p>' . 
+            sprintf(
+                __('Balto Delivery requires WooCommerce version %s or higher to be installed and active.', 'balto-delivery'),
+                BALTO_DELIVERY_MIN_WC_VERSION
+            ) . 
+            '</p></div>';
+    });
+    return;
+}
+
+// Check WooCommerce version
+if (class_exists('WooCommerce')) {
+    if (version_compare(WC()->version, BALTO_DELIVERY_MIN_WC_VERSION, '<')) {
+        add_action('admin_notices', function() {
+            echo '<div class="error"><p>' . 
+                sprintf(
+                    __('Balto Delivery requires WooCommerce version %s or higher. You are running version %s. Please upgrade WooCommerce to use this plugin.', 'balto-delivery'),
+                    BALTO_DELIVERY_MIN_WC_VERSION,
+                    WC()->version
+                ) . 
+                '</p></div>';
+        });
+        return;
+    }
+}
+
+// Initialize plugin only for admin users
+if (current_user_can('manage_options')) {
+    try {
+        // Initialize plugin loader
+        \Balto_Delivery\Includes\Core\Loader::get_instance();
+    } catch (\Exception $e) {
+        add_action('admin_notices', function() use ($e) {
+            echo '<div class="error"><p>' . 
+                sprintf(
+                    __('Error initializing Balto Delivery: %s', 'balto-delivery'),
+                    esc_html($e->getMessage())
+                ) . 
+                '</p></div>';
+        });
+    }
+}

@@ -14,14 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * and submenus within the WordPress admin dashboard. It follows the Singleton design
  * pattern to ensure only one instance of the class exists.
  *
- * @package    Balto_Delivery_for_woocommerce
+ * @package Balto_Delivery_for_woocommerce
  * @subpackage Balto_Delivery_for_woocommerce/Admin
  *
  * @since 1.0.0
- * @author Yahya Eddaqqaq
  */
 class Menu_Manager {
-
 
 	/**
 	 * Instance of this class
@@ -33,7 +31,7 @@ class Menu_Manager {
 	/**
 	 * Get class instance | Singleton pattern
 	 *
-	 * @return Menu_Manager
+	 * @return self
 	 */
 	public static function get_instance(): self {
 		if ( null === self::$instance ) {
@@ -47,6 +45,7 @@ class Menu_Manager {
 	 */
 	private function __construct() {
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
+		add_filter('plugin_action_links_' . BALTO_DELIVERY_PLUGIN_BASENAME,array($this, 'register_action_links'), 20, 1);
 	}
 
 	/**
@@ -71,6 +70,15 @@ class Menu_Manager {
 			'balto-delivery-settings',
 			array( $this, 'render_settings_page' )
 		);
+	}
+
+	/**
+	 * Register action links
+	 *
+	 */
+	function register_action_links($links) {
+		$links[] = '<a href="'. BALTO_DELIVERY_SETTINGS_PAGE .'">Settings</a>';
+		return $links;
 	}
 
 	/**

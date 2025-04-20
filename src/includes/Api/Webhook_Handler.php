@@ -7,6 +7,7 @@ use Balto_Delivery\Includes\Core\Settings;
 
 class Webhook_Handler {
 
+
 	private $rest_controller;
 
 	public function __construct() {
