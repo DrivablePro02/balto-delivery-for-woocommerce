@@ -8,7 +8,7 @@ msgid "An error occurred while saving settings."
 msgstr "حدث خطأ أثناء حفظ الإعدادات."
 
 msgid "Balto"
-msgstr "بالطو"
+msgstr "Balto"
 
 msgid "Balto Delivery"
 msgstr "تسليم بالطو"

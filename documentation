@@ -1,0 +1,60 @@
+# Balto Delivery for WooCommerce Plugin
+
+The Balto Delivery for WooCommerce plugin is designed to enhance delivery management within WooCommerce. This documentation provides an overview of the project's structure, detailing each folder and file to help you understand the plugin's components and their functionalities.
+
+## Project Structure
+
+### src
+The `src` directory contains all the core components of the Balto Delivery plugin.
+
+- **includes**: This directory contains the main PHP classes and functions that make up the plugin's logic.
+  - **Admin**: Manages admin-specific functionalities such as menu and settings page.
+    - `Menu_Manager.php`: Handles creation and management of admin menu items.
+    - `Dashboard_Page.php`: Manages the dashboard page for displaying delivery information.
+    - `Settings_Page.php`: Provides an interface for configuring plugin settings.
+  
+  - **Api**: Contains classes for handling API interactions.
+    - `Api_Key_Manager.php`: Manages secure storage and retrieval of API keys.
+    - `Rest_Controller.php`: Handles REST API endpoints and requests.
+    - `Webhook_Handler.php`: Manages webhook interactions.
+  
+  - **Core**: Core functionalities of the plugin.
+    - `Assets_Manager.php`: Manages the enqueueing of CSS and JavaScript assets.
+    - `Loader.php`: Initializes all plugin components and features.
+    - `Settings.php`: Manages plugin settings including sanitization and retrieval.
+  
+  - **Db**: Database-related functionalities.
+    - `Db_Handler.php`: Provides database interaction capabilities.
+  
+  - **Helpers**: Utility classes to assist with various tasks.
+    - `Ajax_Handler.php`: Manages AJAX requests with enhanced security.
+    - `Sanitizer.php`: Provides data sanitization methods.
+  
+  - **Services**: Service classes to manage specific functionalities.
+    - `Delivery_Service.php`: Manages delivery services, including AJAX actions.
+    - `Tracking_Service.php`: Handles tracking of delivery statuses.
+  
+  - **WooCommerce**: WooCommerce-specific integrations.
+    - `Order_Integration.php`: Integrates with WooCommerce orders.
+    - `Shipping_Integration.php`: Integrates with WooCommerce shipping methods.
+
+### assets
+The `assets` directory contains static files such as JavaScript and CSS.
+
+- **admin/js**: JavaScript files used in the admin dashboard.
+  - `balto-settings.js`: Contains JavaScript for managing settings in the admin area.
+
+### Other Files
+- **changelog**: Documents the history of changes made to the project.
+
+## Authors
+Head authors: 
+    - Yahya Eddaqqaq
+
+## Version
+- 1.0.0
+
+## Summary
+The Balto Delivery for WooCommerce plugin is a comprehensive solution for managing delivery services
+within a WooCommerce environment. With components for handling admin interfaces, API interactions,
+database management, and WooCommerce integration, it provides a robust framework for enhancing delivery operations.

@@ -82,38 +82,6 @@ class Settings_Page {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 	}
 
-
-	/**
-	 * Get the list of available shipping providers from the database.
-	 *
-	 * @return array Associative array of provider keys => names.
-	 */
-	private function get_shipping_providers(): array {
-		$settings = get_option( Settings::OPTION_NAME );
-
-		if ( is_string( $settings ) && is_serialized( $settings ) ) {
-			$settings = unserialize( $settings );
-		} elseif ( is_string( $settings ) ) {
-			$settings = json_decode( $settings, true );
-		}
-
-		if ( ! is_array( $settings ) || ! isset( $settings['shipping'] ) ) {
-			return array();
-		}
-
-		$shipping_providers = array();
-
-		// Extract shipping providers dynamically
-		foreach ( $settings['shipping'] as $key => $provider ) {
-			if ( is_array( $provider ) && isset( $provider['name'] ) && isset( $provider['enabled'] ) && $provider['enabled'] === '1' ) {
-				$shipping_providers[ $key ] = $provider['name'];
-			}
-		}
-
-		return $shipping_providers;
-	}
-
-
 	public function register_settings(): void {
 		register_setting(
 			Settings::OPTION_NAME,
@@ -266,7 +234,7 @@ class Settings_Page {
 
 	public function render_dropdown_field( $args ): void {
 		$value     = $this->settings->get_unserialized_setting( $args['section'], $args['id'] );
-		$providers = $this->get_shipping_providers(); // Get providers dynamically
+		$providers = $this->settings->get_shipping_providers(); // Get providers dynamically
 
 		?>
 		<div class="balto-form-group">
@@ -317,7 +285,6 @@ class Settings_Page {
 					if ( ! empty( $api_key ) ) {
 						// Store the API key securely
 						$this->Api_Key_Manager->store_api_key( $api_key );
-						error_log( 'API key stored successfully: ' . $api_key );
 					}
 					// Remove API key from payload for saving settings
 					unset( $_POST['balto_delivery_settings']['general']['balto_delivery_api_key'] );

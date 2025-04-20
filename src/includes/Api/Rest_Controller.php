@@ -14,21 +14,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  * registering routes, processing requests,
  * validating inputs, and returning responses.
  *
- * @package Balto_Delivery_for_woocommerce
+ * @package    Balto_Delivery_for_woocommerce
  * @subpackage Balto_Delivery_for_woocommerce/Api
  *
- * @since 1.0.0
+ * @since  1.0.0
  * @author Yahya Eddaqqaq
  */
 
 class Rest_Controller {
+
 	/**
 	 * Send a request to an endpoint
 	 *
-	 * @param string $endpoint The endpoint URL
-	 * @param string $method The HTTP method (GET, POST, etc.)
-	 * @param array  $headers The headers to include in the request
-	 * @param array  $data The data to send in the request
+	 * @param  string $endpoint The endpoint URL
+	 * @param  string $method   The HTTP method (GET, POST, etc.)
+	 * @param  array  $headers  The headers to include in the request
+	 * @param  array  $data     The data to send in the request
 	 * @return array|WP_Error The response or WP_Error on failure
 	 */
 	public function send_request( string $endpoint, string $method, array $headers, array $data ) {

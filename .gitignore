@@ -1,7 +1,8 @@
 /vendor/
-/composer.json
-/composer.lock
-/phpunit.xml
 /tests/
 /wp-content/
-.vscode/
+/.vscode/
+/phpunit.xml
+/composer.lock
+/composer.json
+/codeBetter.php

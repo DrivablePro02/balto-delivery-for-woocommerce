@@ -1,0 +1,157 @@
+:root { 
+	--primary-color: #1a5f7a;   
+	--secondary-color: #f4f7f6;
+	--accent-color: #ff6b6b;   
+	--text-color: #2c3e50;   
+	--border-color: #1c6b8f;
+	--button-color: #1a5f7a;   
+	--button-hover-color: #127090;
+	--input-bg-color: #ffffff;   
+	--input-border-color: #bdc3c7;   
+	--input-focus-border-color: #3498db;   
+	--error-color: #e74c3c;   
+	--success-color: #2ecc71;   
+	--shadow-color: rgba(0, 0, 0, 0.1);  
+  } 
+   
+  .balto-wrap { 
+	background-color: var(--secondary-color); 
+	padding: 30px; 
+	max-width: 800px; 
+	margin: 0 auto; 
+	border-radius: 8px; 
+	box-shadow: 0 4px 6px var(--shadow-color); 
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
+  } 
+   
+  h1 { 
+	color: var(--text-color); 
+	font-size: 2.25rem; 
+	margin-bottom: 25px; 
+	font-weight: 600; 
+	border-bottom: 2px solid var(--primary-color); 
+	padding-bottom: 10px; 
+  } 
+   
+  .balto-form-group { 
+	margin-bottom: 25px; 
+	display: flex; 
+	flex-direction: column; 
+	gap: 10px; 
+  } 
+   
+  .balto-form-control { 
+	padding: 12px 15px; 
+	font-size: 1rem; 
+	border: 1px solid var(--input-border-color); 
+	border-radius: 6px; 
+	background-color: var(--input-bg-color); 
+	color: var(--text-color); 
+	width: 100%; 
+	transition: all 0.3s ease; 
+	box-shadow: 0 2px 4px var(--shadow-color); 
+  } 
+   
+  .balto-form-control:focus { 
+	border-color: var(--input-focus-border-color); 
+	outline: none; 
+	box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); 
+  } 
+   
+  .balto-form-check { 
+	display: flex; 
+	gap: 10px; 
+  } 
+   
+  .balto-form-check-input { 
+	width: 18px; 
+	height: 18px; 
+	accent-color: var(--primary-color); 
+  } 
+   
+  .balto-form-check-label { 
+	font-size: 0.95rem; 
+	color: var(--text-color); 
+	user-select: none; 
+  } 
+   
+  .balto-button { 
+	padding: 14px 25px; 
+	font-size: 1rem; 
+	background-color: var(--button-color); 
+	color: white; 
+	border: none; 
+	border-radius: 6px; 
+	cursor: pointer; 
+	transition: all 0.3s ease; 
+	width: 100%; 
+	font-weight: 500; 
+	letter-spacing: 0.5px; 
+	box-shadow: 0 3px 6px var(--shadow-color); 
+  } 
+   
+  .balto-button:hover { 
+	background-color: var(--button-hover-color); 
+	transform: translateY(-2px); 
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
+  } 
+   
+  .balto-button-primary { 
+	background-color: var(--primary-color); 
+  } 
+   
+  .balto-button-primary:hover { 
+	background-color: color-mix(in srgb, var(--primary-color) 80%, black); 
+  } 
+   
+  select.balto-form-control { 
+	appearance: none; 
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M1 4l5 5 5-5' fill='none' stroke='%23888' stroke-width='2'/%3E%3C/svg%3E"); 
+	background-repeat: no-repeat; 
+	background-position: right 15px center; 
+	padding-right: 35px; 
+  } 
+   
+  .error-message { 
+	color: var(--error-color); 
+	font-size: 0.875rem; 
+	margin-top: 5px; 
+	display: flex; 
+	align-items: center; 
+	gap: 8px; 
+  } 
+   
+  .success-message { 
+	color: var(--success-color); 
+	font-size: 0.875rem; 
+	margin-top: 5px; 
+	display: flex; 
+	align-items: center; 
+	gap: 8px; 
+  } 
+   
+  input[type="number"] { 
+	-moz-appearance: textfield; 
+  } 
+   
+  input[type="number"]::-webkit-outer-spin-button, 
+  input[type="number"]::-webkit-inner-spin-button { 
+	-webkit-appearance: none; 
+	margin: 0; 
+  } 
+   
+   
+  @media screen and (max-width: 600px) { 
+	.balto-wrap { 
+	  padding: 20px; 
+	  border-radius: 0; 
+	} 
+	
+	h1 { 
+	  font-size: 1.75rem; 
+	} 
+	
+	.balto-button { 
+	  padding: 12px 20px; 
+	} 
+  }

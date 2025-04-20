@@ -1,0 +1,18 @@
+[33md9992f3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m feat(Sanitizer): enhance security and validation
+[33mb8a0552[m refactor(Loader): enhance security and type safety
+[33m2ee89bd[m added public method get_unserialized_setting - used at Settings_Page.php
+[33m1e31182[m Added api key field with proper storage using Api_Key_Manager
+[33m2f068ac[m added documentation for future mainteneance of the file
+[33mc8cff5a[m added error handling and action sanitization
+[33m6600973[m added action link for settings
+[33mfab61d7[m changes and improvments
+[33m93733c2[m rewrote Assets_Manager class to only load assets where needed in the admin panel
+[33m8e4ecc1[m testing phpcs
+[33m2ed7b75[m after running phpcs
+[33m4dcd689[m added languages folder for translations
+[33m0c7e01e[m t t#	modified:   src/includes/Core/Loader.php t#	modified:   src/includes/WooCommerce/Order_Integration.php
+[33m8dfa053[m Changed the main plugin file to a class and added better intilization for the loader class
+[33m5b2e3b1[m added centralized db handler, dashboard page and centralized sanitization file
+[33mb50030f[m addded dashoboard page
+[33m44da925[m initial commit - v1.0.0
+[33m377612c[m Adds initial Balto Delivery plugin setup

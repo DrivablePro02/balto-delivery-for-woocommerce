@@ -25,9 +25,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Settings {
 
+	/**
+	 * Option name in WordPress options table
+	 *
+	 * @var string
+	 */
 	const OPTION_NAME = 'balto_delivery_settings';
 
-	private static $defaults = array(
+	/**
+	 * Default settings structure
+	 *
+	 * @var array<string, array<string, mixed>>
+	 */
+	private static array $defaults = array(
 		'general'  => array(
 			'balto_delivery_api_key'	=> '',
 			'enable_tracking' 			=> 'yes',
@@ -63,12 +73,17 @@ class Settings {
 	);
 
 	/**
-	 * Get an instance of the class
+	 * Instance of this class
 	 *
-	 * @var Settings
+	 * @var self|null
 	 */
-	private static $instance;
+	private static ?self $instance = null;
 
+	/**
+	 * Get class instance | singleton pattern
+	 *
+	 * @return self
+	 */
 	public static function get_instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -76,9 +91,17 @@ class Settings {
 		return self::$instance;
 	}
 
+	/**
+	 * Private constructor to prevent direct creation
+	 */
 	private function __construct() {
 	}
 
+	/**
+	 * Get default settings
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
 	public static function get_defaults(): array {
 		return self::$defaults;
 	}
@@ -86,13 +109,14 @@ class Settings {
 	/**
 	 * Get the unserialized settings value
 	 *
-	 * @param string $section Section name
-	 * @param string $key Setting key
-	 * @param mixed  $default Default value
+	 * @param string $section Section name.
+	 * @param string $key     Setting key.
+	 * @param mixed  $default Default value.
 	 * @return mixed
+	 * @throws \Exception When settings is not an array.
 	 */
-	public function get_unserialized_setting( $section, $key, $default = '' ) {
-		$settings = get_option( Settings::OPTION_NAME );
+	public function get_unserialized_setting( string $section, string $key, mixed $default = '' ): mixed {
+		$settings = get_option( self::OPTION_NAME );
 
 		// Ensure correct unserialization
 		if ( is_string( $settings ) ) {
@@ -105,7 +129,7 @@ class Settings {
 
 		// Ensure settings is an array
 		if ( ! is_array( $settings ) ) {
-			return $default;
+			throw new \Exception( 'Settings is not an array' );
 		}
 
 		// Fix for duplicate "balto" issue in "shipping"
@@ -119,161 +143,219 @@ class Settings {
 		return $settings[ $section ][ $key ] ?? $default;
 	}
 
-	public function sanitize_balto_settings($input): array {
+	/**
+	 * Get the list of available shipping providers from the database.
+	 *
+	 * @return array<string, string> Associative array of provider keys => names.
+	 */
+	public function get_shipping_providers(): array {
+		$settings = get_option( self::OPTION_NAME );
+
+		if ( is_string( $settings ) && is_serialized( $settings ) ) {
+			$settings = unserialize( $settings );
+		} elseif ( is_string( $settings ) ) {
+			$settings = json_decode( $settings, true );
+		}
+
+		if ( ! is_array( $settings ) || ! isset( $settings['shipping'] ) ) {
+			return array();
+		}
+
+		$shipping_providers = array();
+
+		// Extract shipping providers dynamically
+		foreach ( $settings['shipping'] as $key => $provider ) {
+			if ( is_array( $provider ) && isset( $provider['name'] ) && isset( $provider['enabled'] ) && $provider['enabled'] === '1' ) {
+				$shipping_providers[ $key ] = $provider['name'];
+			}
+		}
+
+		return $shipping_providers;
+	}
+
+	/**
+	 * Sanitize Balto settings
+	 *
+	 * @param array<string, mixed>|string $input Input data to sanitize.
+	 * @return array<string, array<string, mixed>>
+	 */
+	public function sanitize_balto_settings( array|string $input ): array {
 		// Debug logging
-		error_log('Raw Input Data: ' . print_r($input, true));
+		error_log( 'Raw Input Data: ' . print_r( $input, true ) );
 	
 		// Convert string input (if serialized or JSON) to an array
-		if (is_string($input)) {
-			if (is_serialized($input)) {
-				$input = unserialize($input);
+		if ( is_string( $input ) ) {
+			if ( is_serialized( $input ) ) {
+				$input = unserialize( $input );
 			} else {
-				$decoded = json_decode($input, true);
-				if (json_last_error() === JSON_ERROR_NONE) {
+				$decoded = json_decode( $input, true );
+				if ( json_last_error() === JSON_ERROR_NONE ) {
 					$input = $decoded;
 				}
 			}
 		}
 	
 		// Ensure input is an array
-		if (!is_array($input)) {
-			error_log('Input is not an array after decoding. Initializing empty array.');
-			$input = [];
+		if ( ! is_array( $input ) ) {
+			error_log( 'Input is not an array after decoding. Initializing empty array.' );
+			$input = array();
 		}
 	
 		// Get current settings to merge with defaults
-		$current = get_option(self::OPTION_NAME, self::$defaults);
-		if (is_string($current)) {
-			if (is_serialized($current)) {
-				$current = unserialize($current);
+		$current = get_option( self::OPTION_NAME, self::$defaults );
+		if ( is_string( $current ) ) {
+			if ( is_serialized( $current ) ) {
+				$current = unserialize( $current );
 			} else {
-				$decoded = json_decode($current, true);
-				if (json_last_error() === JSON_ERROR_NONE) {
+				$decoded = json_decode( $current, true );
+				if ( json_last_error() === JSON_ERROR_NONE ) {
 					$current = $decoded;
 				}
 			}
 		}
 	
 		// Ensure current settings are an array
-		if (!is_array($current)) {
+		if ( ! is_array( $current ) ) {
 			$current = self::$defaults;
 		}
 	
-		$sanitized = [];
+		$sanitized = array();
 	
 		// Loop through default settings structure
-		foreach (self::$defaults as $section => $fields) {
-			$sanitized[$section] = [];
+		foreach ( self::$defaults as $section => $fields ) {
+			$sanitized[ $section ] = array();
 	
-			foreach ($fields as $key => $default) {
+			foreach ( $fields as $key => $default ) {
 				// Get the value from input, fallback to current settings, then default
-				$value = $input[$section][$key] ?? $current[$section][$key] ?? $default;
+				$value = $input[ $section ][ $key ] ?? $current[ $section ][ $key ] ?? $default;
 	
 				// Sanitize based on field type
-				switch ($key) {
+				switch ( $key ) {
 					// Boolean fields (yes/no)
 					case 'enable_tracking':
-					case 'enable_customer_notifications':
-					case 'enable_admin_notifications':
-					case 'sms_notifications':
-					case 'enable_zones':
-					case 'enable_rest_api':
-					case 'enable_driver_app':
-					case 'auto_assign_orders':
-						$sanitized[$section][$key] = in_array($value, ['yes', true, 1, '1'], true) ? 'yes' : 'no';
+						$sanitized[ $section ][ $key ] = filter_var( $value, FILTER_VALIDATE_BOOLEAN );
 						break;
-	
+						
 					// Integer fields
 					case 'delivery_radius':
 					case 'max_delivery_deliveries':
-						$sanitized[$section][$key] = absint(filter_var($value, FILTER_SANITIZE_NUMBER_INT));
+						$sanitized[ $section ][ $key ] = absint( filter_var( $value, FILTER_SANITIZE_NUMBER_INT ) );
 						break;
 	
 					// Float fields
 					case 'price_per_km':
 					case 'min_delivery_price':
-						$sanitized[$section][$key] = (float) filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+						$sanitized[ $section ][ $key ] = (float) filter_var( $value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 						break;
 	
 					// Allowed shipping providers
 					case 'selected_shipping_provider':
-						$allowed_providers = ['balto', 'dhl', 'fedex', 'ups', 'usps'];
-						$sanitized[$section][$key] = in_array($value, $allowed_providers, true) ? $value : 'balto';
+						$allowed_providers = array( 'balto', 'dhl', 'fedex', 'ups', 'usps' );
+						$sanitized[ $section ][ $key ] = in_array( $value, $allowed_providers, true ) ? $value : 'balto';
 						break;
 	
 					// Default sanitization (text)
 					default:
-						$sanitized[$section][$key] = is_array($value) 
-							? array_map('sanitize_text_field', $value)
-							: sanitize_text_field($value);
+						$sanitized[ $section ][ $key ] = is_array( $value ) 
+							? array_map( 'sanitize_text_field', $value )
+							: sanitize_text_field( $value );
 				}
 			}
 		}
 	
 		// Debug logging
-		error_log('Sanitized Output: ' . print_r($sanitized, true));
+		error_log( 'Sanitized Output: ' . print_r( $sanitized, true ) );
 	
 		return $sanitized;
 	}
-	
 
-
-	public function get_settings() {
+	/**
+	 * Get all settings
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	public function get_settings(): array {
 		$settings = is_multisite() ? get_site_option( self::OPTION_NAME ) : get_option( self::OPTION_NAME );
 		$settings_maybied = maybe_serialize( $settings ); 
 		return $settings ? json_decode( $settings_maybied, true ) : self::$defaults;
 	}
 	
 	/**
-	 * Handles adding/updating the settings option with multisite support
-	 */
-    public function add_option(array $settings): bool {
-        // Sanitize before saving
-        $sanitized_settings = $this->sanitize_balto_settings($settings);
-        
-        // JSON encode with error checking
-        $encoded_settings = json_encode($sanitized_settings);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('JSON encoding failed: ' . json_last_error_msg());
-            return false;
-        }
-        
-        if (is_multisite()) {
-            return add_site_option(self::OPTION_NAME, $encoded_settings);
-        } else {
-            return add_option(self::OPTION_NAME, $encoded_settings, '', 'no'); // 'no' means not autoload
-        }
-    }
-    
-    public function update_option(array $settings): bool {
-        // Sanitize before saving
-        $sanitized_settings = $this->sanitize_balto_settings($settings);
-        
-        // JSON encode with error checking
-        $encoded_settings = json_encode($sanitized_settings);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('JSON encoding failed: ' . json_last_error_msg());
-            return false;
-        }
-        
-        if (is_multisite()) {
-            return update_site_option(self::OPTION_NAME, $encoded_settings);
-        } else {
-            return update_option(self::OPTION_NAME, $encoded_settings, 'no');
-        }
-    }
-	
-	
-	/**
-	 * Helper method to get an individual setting value
+	 * Add new settings option
 	 *
-	 * @param  string $section
-	 * @param  string $key
-	 * @return mixed
+	 * @param array<string, array<string, mixed>> $settings Settings to add.
+	 * @return bool Whether the settings were added successfully.
 	 */
-	public function get_setting( string $section, string $key, $default = null ) {
-		$settings = $this->get_settings();
-		return $settings[$section][$key] ?? $default;
+	public function add_option( array $settings ): bool {
+		// Sanitize before saving
+		$sanitized_settings = $this->sanitize_balto_settings( $settings );
+		
+		// JSON encode with error checking
+		$encoded_settings = json_encode( $sanitized_settings );
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			error_log( 'JSON encoding failed: ' . json_last_error_msg() );
+			return false;
+		}
+		
+		if ( is_multisite() ) {
+			return add_site_option( self::OPTION_NAME, $encoded_settings );
+		} else {
+			return add_option( self::OPTION_NAME, $encoded_settings, '', 'no' ); // 'no' means not autoload
+		}
 	}
 	
+	/**
+	 * Update existing settings option
+	 *
+	 * @param array<string, array<string, mixed>> $settings Settings to update.
+	 * @return bool Whether the settings were updated successfully.
+	 */
+	public function update_option( array $settings ): bool {
+		// Sanitize before saving
+		$sanitized_settings = $this->sanitize_balto_settings( $settings );
+		
+		// JSON encode with error checking
+		$encoded_settings = json_encode( $sanitized_settings );
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			error_log( 'JSON encoding failed: ' . json_last_error_msg() );
+			return false;
+		}
+		
+		if ( is_multisite() ) {
+			return update_site_option( self::OPTION_NAME, $encoded_settings );
+		} else {
+			return update_option( self::OPTION_NAME, $encoded_settings, 'no' );
+		}
+	}
+	
+	/**
+	 * Get an individual setting value
+	 *
+	 * @param string $section Section name.
+	 * @param string $key     Setting key.
+	 * @param mixed  $default Default value.
+	 * @return mixed
+	 */
+	public function get_setting( string $section, string $key, mixed $default = null ): mixed {
+		$settings = $this->get_settings();
+		return $settings[ $section ][ $key ] ?? $default;
+	}
+
+	/**
+	 * Prevent cloning
+	 *
+	 * @return void
+	 */
+	private function __clone() {
+	}
+
+	/**
+	 * Prevent unserializing
+	 *
+	 * @throws \Exception When attempting to unserialize.
+	 * @return void
+	 */
+	public function __wakeup() {
+		throw new \Exception( 'Cannot unserialize singleton' );
+	}
 }
